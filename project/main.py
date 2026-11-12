@@ -1,13 +1,18 @@
+#json libraryn är till bilden och är ett speciellt format
+import json
+
 import sys
 import time
-
 import lvgl as lv
 import network
+
+# ny library
+import urequests
 
 from board_lvgl import start_board
 from debug_log import log
 
-from secrets import WIFI_SSID, WIFI_PASSWORD
+from secrets import WIFI_SSID, WIFI_PASSWORD, API_key
 
 
 class Application:
@@ -60,16 +65,7 @@ class Application:
             self.on_tile2_clicked, lv.EVENT.CLICKED, None
         )
 
-    #     Test 
-    #    self.tile3_label = lv.label(self.tile2)
-    #    self.tile3_label.set_text("Settings")
-    #    self.tile3_label.set_style_text_font(lv.font_montserrat_28, 0)
-    #     self.tile3_label.center()
-    #     self.apply_tile_colors(self.tile2, self.tile2_label, False)
-    #    self.tile3.add_flag(lv.obj.FLAG.CLICKABLE)
-    #    self.tile3.add_event_cb(
-    #        self.on_tile3_clicked, lv.EVENT.CLICKED, None
-    #    )
+
 
     @staticmethod
     def connect_wifi():
@@ -92,6 +88,3 @@ except Exception as error:
     log("FATAL: %r" % (error,))
     sys.print_exception(error)
     raise
-
-
-
