@@ -1,13 +1,5 @@
-import os
-from pathlib import Path
-
 import requests
-from dotenv import load_dotenv
-
-load_dotenv(Path(__file__).with_name(".env"))
-API_key = os.getenv("TRAFIKLAB_API_KEY")
-if not API_key:
-    raise RuntimeError("TRAFIKLAB_API_KEY saknas i .env-filen.")
+from secrets import API_key
 
 stationer = {
     "Karlskrona C": "740000230",
