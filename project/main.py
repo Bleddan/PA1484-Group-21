@@ -26,11 +26,10 @@ class Application:
     def apply_tile_colors(tile, label, dark):
         tile.set_style_bg_opa(lv.OPA.COVER, 0)
         tile.set_style_bg_color(
-            lv.color_hex(0x000000 if dark else 0xFFFFFF), 0
+            lv.color_hex(0x033B4A if dark else 0x055065), 0
         )
-        label.set_style_text_color(
-            lv.color_hex(0xFFFFFF if dark else 0x000000), 0
-        )
+        label.set_style_text_color(lv.color_hex(0xFFFFFF), 0)
+
 
     def on_tile2_clicked(self, _event):
         self.tile2_dark = not self.tile2_dark
@@ -46,8 +45,13 @@ class Application:
         self.tile2 = self.tileview.add_tile(1, 0, lv.DIR.LEFT)
 
         self.tile1_label = lv.label(self.tile1)
-        self.tile1_label.set_text("Hello Students")
+        self.tile1_label.set_text(
+        "Public Transport Info\nVersion 1.2\nGroup 21:\n"
+        "* Blediona Huskaj\n* Alexandros Salama\n* Alan Khalil\n"
+        "* Alind Khudeeda\n* Leon Bönström\n* Ahmad lahm-Alajanje"
+        )
         self.tile1_label.set_style_text_font(lv.font_montserrat_28, 0)
+        self.tile1_label.set_width(560)
         self.tile1_label.center()
         self.apply_tile_colors(self.tile1, self.tile1_label, False)
 
