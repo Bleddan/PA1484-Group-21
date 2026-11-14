@@ -11,7 +11,6 @@ import urequests
 
 from board_lvgl import start_board
 from debug_log import log
-
 from secrets import WIFI_SSID, WIFI_PASSWORD, API_key
 
 
@@ -36,9 +35,6 @@ class Application:
     def on_tile2_clicked(self, _event):
         self.tile2_dark = not self.tile2_dark
         self.apply_tile_colors(self.tile2, self.tile2_label, self.tile2_dark)
-    def on_tile3_clicked(self, _event):
-        self.tile2_dark = not self.tile3_dark
-        self.apply_tile_colors(self.tile3, self.tile3_label, self.tile3_dark)
 
     def create_ui(self):
         'Function: Creates UI'
@@ -50,13 +46,13 @@ class Application:
         self.tile2 = self.tileview.add_tile(1, 0, lv.DIR.LEFT)
 
         self.tile1_label = lv.label(self.tile1)
-        self.tile1_label.set_text("Group 21: Blediona Huskaj, Alexandros Salama, Alan Khalil, Alind Khudeeda, Leon Bönström, Ahmad lahm-Alajanje")
+        self.tile1_label.set_text("Hello Students")
         self.tile1_label.set_style_text_font(lv.font_montserrat_28, 0)
         self.tile1_label.center()
         self.apply_tile_colors(self.tile1, self.tile1_label, False)
 
         self.tile2_label = lv.label(self.tile2)
-        self.tile2_label.set_text("Test")
+        self.tile2_label.set_text("Welcome to the workshop")
         self.tile2_label.set_style_text_font(lv.font_montserrat_28, 0)
         self.tile2_label.center()
         self.apply_tile_colors(self.tile2, self.tile2_label, False)
@@ -64,8 +60,6 @@ class Application:
         self.tile2.add_event_cb(
             self.on_tile2_clicked, lv.EVENT.CLICKED, None
         )
-
-
 
     @staticmethod
     def connect_wifi():
