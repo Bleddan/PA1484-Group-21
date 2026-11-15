@@ -51,7 +51,7 @@ class Application:
         "* Alind Khudeeda\n* Leon Bönström\n* Ahmad lahm-Alajanje"
         )
         self.tile1_label.set_style_text_font(lv.font_montserrat_28, 0)
-        self.tile1_label.set_width(560)
+        self.tile1_label.set_width(550)
         self.tile1_label.center()
         self.apply_tile_colors(self.tile1, self.tile1_label, False)
 
