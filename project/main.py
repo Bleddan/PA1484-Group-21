@@ -1,6 +1,4 @@
-#json libraryn är till bilden och är ett speciellt format
 import json
-
 import sys
 import time
 import lvgl as lv
@@ -23,6 +21,7 @@ class Application:
         log("student application ready")
 
     @staticmethod
+#Här är en funktion som ändrar färgen på bakgrunden och texten på en tile, vi bytte ut till skolans logga färg 
     def apply_tile_colors(tile, label, dark):
         tile.set_style_bg_opa(lv.OPA.COVER, 0)
         tile.set_style_bg_color(
