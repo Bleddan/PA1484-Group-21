@@ -21,7 +21,7 @@ class Application:
         log("student application ready")
 
     @staticmethod
-#Här är en funktion som ändrar färgen på bakgrunden och texten på en tile, vi bytte ut till skolans logga färg 
+    #Här är en funktion som ändrar färgen på bakgrunden och texten på en tile, vi bytte ut till skolans logga färg 
     def apply_tile_colors(tile, label, dark):
         tile.set_style_bg_opa(lv.OPA.COVER, 0)
         tile.set_style_bg_color(
@@ -29,10 +29,10 @@ class Application:
         )
         label.set_style_text_color(lv.color_hex(0xFFFFFF), 0)
 
-
-    def on_tile2_clicked(self, _event):
-        self.tile2_dark = not self.tile2_dark
-        self.apply_tile_colors(self.tile2, self.tile2_label, self.tile2_dark)
+    # Tar bort sen 
+    # def on_tile2_clicked(self, _event):
+    #    self.tile2_dark = not self.tile2_dark
+    #   self.apply_tile_colors(self.tile2, self.tile2_label, self.tile2_dark)
 
     def create_ui(self):
         'Function: Creates UI'
@@ -40,8 +40,16 @@ class Application:
         self.tileview.set_size(600, 450)
         self.tileview.set_scrollbar_mode(lv.SCROLLBAR_MODE.OFF)
 
+    # Ersätt med dessa tre nedan
+    #   self.tile1 = self.tileview.add_tile(0, 0, lv.DIR.RIGHT)
+    #   self.tile2 = self.tileview.add_tile(1, 0, lv.DIR.LEFT)
+
+        #Detta är vår US,2.1
         self.tile1 = self.tileview.add_tile(0, 0, lv.DIR.RIGHT)
-        self.tile2 = self.tileview.add_tile(1, 0, lv.DIR.LEFT)
+        self.tile2 = self.tileview.add_tile(1, 0, lv.DIR.RIGHT | lv.DIR.LEFT)
+        self.tile3 = self.tileview.add_tile(2, 0, lv.DIR.LEFT)
+
+
 
         self.tile1_label = lv.label(self.tile1)
         self.tile1_label.set_text(
@@ -59,10 +67,10 @@ class Application:
         self.tile2_label.set_style_text_font(lv.font_montserrat_28, 0)
         self.tile2_label.center()
         self.apply_tile_colors(self.tile2, self.tile2_label, False)
-        self.tile2.add_flag(lv.obj.FLAG.CLICKABLE)
-        self.tile2.add_event_cb(
-            self.on_tile2_clicked, lv.EVENT.CLICKED, None
-        )
+
+    # Dessa behövs inte längre för vi behöver inte klicka längre   
+    #    self.tile2.add_flag(lv.obj.FLAG.CLICKABLE)
+    #    self.tile2.add_event_cb(self.on_tile2_clicked, lv.EVENT.CLICKED, None)
 
     @staticmethod
     def connect_wifi():
