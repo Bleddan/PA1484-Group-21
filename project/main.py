@@ -27,6 +27,7 @@ class Application:
         self.display, self.touch, self.handler = start_board()
         self.tile2_dark = False
         self.create_ui()
+        self.stop_dropdown.set_selected(0)
         self.connect_wifi()
 
         #Detta las till för att visa att vi väntar på första uppdateringen, annars visas bara "Welcome to the workshop" tills vi får data från API:et
@@ -48,7 +49,6 @@ class Application:
         pass
 
 
-
     def fetch_trafiklab_data(self):
         # Här kollas om makapären har WIFI annars visas felmeddelandet
         if not network.WLAN(network.STA_IF).isconnected():
@@ -56,15 +56,14 @@ class Application:
             return
 
        
-        stop_dropdown = getattr(self, 'stop_dropdown', None)
-        stop_idx = stop_dropdown.get_selected() if stop_dropdown else 0
-        stop_idx = min(max(stop_idx, 0), len(STATIONS) - 1)
-        stop_name, area_id = STATIONS[stop_idx]
+        stop_index = self.stop_dropdown.get_selected() if hasattr(self, 'stop_dropdown') else 0
+        stop_index = min(max(stop_index, 0), len(STATIONS) - 1)
+        stop_name, area_id = STATIONS[stop_index]
 
         self.tile2_label.set_text("Loading live data...")
 
-        
-        #Från trafiklab APIE url länken
+
+        #Från trafiklab API url länken
         try:
             url = f"https://realtime-api.trafiklab.se/v1/departures/{area_id}?key={API_key}"
             response = urequests.get(url)
@@ -94,7 +93,10 @@ class Application:
         except Exception as e:
             self.tile2_label.set_text("Error loading data:\n" + str(e)[:50])
 
-
+    #US3.2B 
+    def on_settings_changed(self, _event):
+        pass
+    #------------------------------------------------------------------------
 
 
     def create_ui(self):
@@ -121,7 +123,6 @@ class Application:
         self.apply_tile_colors(self.tile1, self.tile1_label, False)
 
 
-
         self.tile2_label = lv.label(self.tile2)
         self.tile2_label.set_text(
             "DEPARTURES\nLoading live data...\n\n"
@@ -134,13 +135,25 @@ class Application:
         self.apply_tile_colors(self.tile2, self.tile2_label, False)
 
 
-    #US3.1 Settings skärmen med alla inställningar
+        #US3.1 Settings skärmen med alla inställningar
         settings_title = lv.label(self.tile3)
         settings_title.set_text("SETTINGS")
         settings_title.set_style_text_font(lv.font_montserrat_28, 0)
         self.apply_tile_colors(self.tile3, settings_title, False)
         settings_title.set_pos(250, 20)
 
+        # US3.2B Val av hållplats ligger här 
+        stop_label = lv.label(self.tile3)
+        stop_label.set_text("Choose a stop station:")
+        stop_label.set_style_text_font(lv.font_montserrat_20, 0)
+        stop_label.set_style_text_color(lv.color_hex(0xFFFFFF), 0)
+        stop_label.set_pos(40, 60)
+        self.stop_dropdown = lv.dropdown(self.tile3)
+        self.stop_dropdown.set_options("\n".join(name for name, _ in STATIONS))
+        self.stop_dropdown.set_size(520, 48)
+        self.stop_dropdown.set_pos(40, 88)
+        self.stop_dropdown.add_event_cb(self.on_settings_changed, lv.EVENT.VALUE_CHANGED, None)
+        #-----------------------------------------------------------------------------------------
 
 
     @staticmethod
