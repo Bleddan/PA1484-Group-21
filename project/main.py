@@ -28,6 +28,11 @@ class Application:
         self.tile2_dark = False
         self.create_ui()
         self.stop_dropdown.set_selected(0)
+
+        #US3.3 Startvärde till "ALl" (dvs index 3)  
+        self.transport_dropdown.set_selected(3)
+        #----------------------------------------------------------------
+
         self.connect_wifi()
 
         #Detta las till för att visa att vi väntar på första uppdateringen, annars visas bara "Welcome to the workshop" tills vi får data från API:et
@@ -55,10 +60,15 @@ class Application:
             self.tile2_label.set_text("Wi-Fi is not connected.")
             return
 
-       
+       #Vår valda hållplats
         stop_index = self.stop_dropdown.get_selected() if hasattr(self, 'stop_dropdown') else 0
         stop_index = min(max(stop_index, 0), len(STATIONS) - 1)
         stop_name, area_id = STATIONS[stop_index]
+
+        #US3.3
+        transport_index = self.transport_dropdown.get_selected() if hasattr(self, 'transport_dropdown') else 3
+        transport_index = min(max(transport_index, 0), len(TRANSPORT_MODES) - 1)
+        selected_mode = TRANSPORT_MODES[transport_index]
 
         self.tile2_label.set_text("Loading live data...")
 
@@ -71,8 +81,16 @@ class Application:
             response.close()
 
             lines = ["DEPARTURES", stop_name, ""]
-            
-            for dep in data.get("departures", [])[:3]:
+
+            #US3.3 I denna for loop filtreras avgångarna beroende på den valda tranport typen man har valt, om man väljer "all" så visas alla avgångar
+            # Dock den behöver en refresh för uppdatera datan
+            matching_departures = []
+            for dep in data.get("departures", []):
+                route = dep.get("route", {})
+                if selected_mode is None or route.get("transport_mode") == selected_mode:
+                    matching_departures.append(dep)
+
+            for dep in matching_departures[:3]:
                 route = dep.get("route", {})
                 line = route.get("designation") or "?"
                 direction = route.get("direction") or "Unknown"
@@ -86,6 +104,11 @@ class Application:
                 lines.append(direction)
                 lines.append(status)
                 lines.append("")
+
+            #Detta dycker upp om det inte finns avgångar för den valda transport typen
+            if not matching_departures:
+                lines.append("No departures found for the selected transport type.")
+
 
             lines.append("Data: Trafiklab.se")
             self.tile2_label.set_text("\n".join(lines))
@@ -153,6 +176,20 @@ class Application:
         self.stop_dropdown.set_size(520, 48)
         self.stop_dropdown.set_pos(40, 88)
         self.stop_dropdown.add_event_cb(self.on_settings_changed, lv.EVENT.VALUE_CHANGED, None)
+        #-----------------------------------------------------------------------------------------
+        #US3.3 Här väljs transporttyp dvs bus, tåg osv
+        transport_label = lv.label(self.tile3)
+        transport_label.set_text("Transport")
+        transport_label.set_style_text_font(lv.font_montserrat_20, 0)
+        transport_label.set_style_text_color(lv.color_hex(0xFFFFFF), 0)
+        transport_label.set_pos(40, 145)
+        self.transport_dropdown = lv.dropdown(self.tile3)
+        self.transport_dropdown.set_options("\n".join(TRANSPORT_OPTIONS))
+        self.transport_dropdown.set_size(520, 48)
+        self.transport_dropdown.set_pos(40, 173)
+        self.transport_dropdown.add_event_cb(
+            self.on_settings_changed, lv.EVENT.VALUE_CHANGED, None
+        )
         #-----------------------------------------------------------------------------------------
 
 
