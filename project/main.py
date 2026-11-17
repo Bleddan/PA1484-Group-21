@@ -19,19 +19,22 @@ STATIONS = (
 )
 TRANSPORT_OPTIONS = ("Bus", "Train", "Ferry", "All")
 TRANSPORT_MODES = ("BUS", "TRAIN", "BOAT", None)
+
 Refresh_intervall = 60_000 #I milisekunder
-
-
+#US3.4 Här sparas inställningarna
+Settings_file = "settings.json"
+#---------------------------------
 
 class Application:
     def __init__(self):
         self.display, self.touch, self.handler = start_board()
         self.tile2_dark = False
         self.create_ui()
-        self.stop_dropdown.set_selected(0)
 
-        #US3.3 Startvärde till "ALl" (dvs index 3)  
-        self.transport_dropdown.set_selected(3)
+        #US3.4 Tog bort koden som tvingade inställningarna att visa Campus gräsvik (index 0) och transport typen "ALL" som va index 3. Nu läser den av settings saved filen istället.
+        self.saved_stop_index, self.saved_transport_index = self.load_saved_settings()
+        self.stop_dropdown.set_selected(self.saved_stop_index)
+        self.transport_dropdown.set_selected(self.saved_transport_index)
         #----------------------------------------------------------------
 
         self.connect_wifi()
@@ -155,7 +158,6 @@ class Application:
         label.center()
         return button
 
-
     # US3.2B 
     # När användaren ändrar en dropdown, säger vi till dem via status-texten att de måste uppdatera manuellt för att se den nya datan.
     def on_settings_changed(self, _event):
@@ -163,6 +165,37 @@ class Application:
         self.update_status()
     #------------------------------------------------------------------------
 
+    #US3.4 Försöker läsa in tidigare sparade val från filen.
+    # Det också om filen saknar eller innehåller fel värde då skickas stadnravärde 0 eller 3 tillbaka istället. 
+    def load_saved_settings(self):
+        try:
+            with open(Settings_file,"r") as f:
+                settings = json.load(f)
+                stop_index = int(settings.get("stop", 0))
+                transport_index = int(settings.get("transport",3))
+                if stop_index not in range(len(STATIONS)): stop_index = 0
+                if transport_index not in range(len(TRANSPORT_OPTIONS)): transport_index = 3
+                return stop_index, transport_index
+        except Exception:
+            return 0, 3
+    #-------------------------------------------------------------------------
+
+    #US3.4 Hämtar de val som användaren just nu har gjort i dropdown menyn i inställningarna och sparar de i en JSON-fil så att den minns till nästa restart.
+    def when_save_settings_clicked(self, _event):
+        settings = {
+            "stop": self.stop_dropdown.get_selected(),
+            "transport": self.transport_dropdown.get_selected(),
+        }
+        try:
+            with open(Settings_file, "w") as f:
+                json.dump(settings, f)
+            self.saved_stop_index = settings["stop"]
+            self.saved_transport_index = settings["transport"]
+            self.data_status = "Settings saved"
+        except Exception:
+            self.data_status = "Couldnt save settings"
+        self.update_status()
+    #--------------------------------------------------------------------
 
     def create_ui(self):
         'Function: Creates UI'
@@ -198,9 +231,11 @@ class Application:
         self.tile2_label.set_height(330)
         self.tile2_label.set_pos(24, 20)
         self.apply_tile_colors(self.tile2, self.tile2_label, False)
-        self.action_button(self.tile2, "Refresh", 390, 380, 170, self.when_refresh_clicked
-        )
+        self.action_button(self.tile2, "Refresh", 390, 380, 170, self.when_refresh_clicked)
 
+        #US3.4 Själva "Save" knappen
+        self.action_button(self.tile3, "Save", 24, 340, 176, self.when_save_settings_clicked)
+        #--------------------------------------------------
 
         #US3.1 Settings skärmen med alla inställningar
         settings_title = lv.label(self.tile3)
@@ -220,9 +255,6 @@ class Application:
         self.status_label.set_style_text_color(lv.color_hex(0xFFFFFF), 0)
         self.status_label.set_pos(40, 230)
         #------------------------------------------------
-
-
-        
 
         # US3.2B Val av hållplats ligger här 
         stop_label = lv.label(self.tile3)
