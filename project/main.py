@@ -52,8 +52,14 @@ class Application:
         )
         label.set_style_text_color(lv.color_hex(0xFFFFFF), 0)
 
+
+    # US4.3 (Wi-Fi & Data Status)
+    # Funktionen som kollar systemets WIFI anslutning och uppdaterar texten
     def update_status(self):
-        pass
+        wifi_status = "Connected" if network.WLAN(network.STA_IF).isconnected() else "Disconnected"
+        if hasattr(self, 'status_label'):
+            self.status_label.set_text(f"Wi-Fi: {wifi_status}\nData: {self.data_status}")
+
 
 
     def fetch_trafiklab_data(self):
@@ -62,20 +68,24 @@ class Application:
             self.tile2_label.set_text("Wi-Fi is not connected.")
             return
 
-       #Vår valda hållplats
+       # Vår valda hållplats
         stop_index = self.stop_dropdown.get_selected() if hasattr(self, 'stop_dropdown') else 0
         stop_index = min(max(stop_index, 0), len(STATIONS) - 1)
         stop_name, area_id = STATIONS[stop_index]
 
-        #US3.3
+        # US3.3
         transport_index = self.transport_dropdown.get_selected() if hasattr(self, 'transport_dropdown') else 3
         transport_index = min(max(transport_index, 0), len(TRANSPORT_MODES) - 1)
         selected_mode = TRANSPORT_MODES[transport_index]
 
         self.tile2_label.set_text("Loading live data...")
 
+        # U4.3 - 1
+        self.data_status = "Updated"
+        self.update_status()
+        # -----------------------------------
 
-        #Från trafiklab API url länken
+        # Från trafiklab API url länken
         try:
             url = f"https://realtime-api.trafiklab.se/v1/departures/{area_id}?key={API_key}"
             response = urequests.get(url)
@@ -117,6 +127,11 @@ class Application:
             
         except Exception as e:
             self.tile2_label.set_text("Error loading data:\n" + str(e)[:50])
+            # U4.3 - 3
+            self.data_status = "Update failed"
+            self.update_status()
+            # ------------------------------------------------
+
 
 
 
@@ -141,9 +156,11 @@ class Application:
         return button
 
 
-    #US3.2B 
+    # US3.2B 
+    # När användaren ändrar en dropdown, säger vi till dem via status-texten att de måste uppdatera manuellt för att se den nya datan.
     def on_settings_changed(self, _event):
-        pass
+        self.data_status = "Settings changed: tap Refresh"
+        self.update_status()
     #------------------------------------------------------------------------
 
 
@@ -195,7 +212,17 @@ class Application:
         #US4.2 vår knapp i tile 2 och 3
         self.action_button(self.tile3, "Refresh",400,340,176, self.when_refresh_clicked)
 
+        # US4.3: Wi-Fi och datastatus
+        # Detta gör så att användaren kan kan se nätverkstatusen på inställningarna
+        self.status_label = lv.label(self.tile3)
+        self.status_label.set_text("Wi-Fi: checking..\nLive Data: waiting..")
+        self.status_label.set_style_text_font(lv.font_montserrat_20, 0)
+        self.status_label.set_style_text_color(lv.color_hex(0xFFFFFF), 0)
+        self.status_label.set_pos(40, 230)
+        #------------------------------------------------
 
+
+        
 
         # US3.2B Val av hållplats ligger här 
         stop_label = lv.label(self.tile3)
