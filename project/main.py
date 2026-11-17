@@ -19,6 +19,7 @@ STATIONS = (
 )
 TRANSPORT_OPTIONS = ("Bus", "Train", "Ferry", "All")
 TRANSPORT_MODES = ("BUS", "TRAIN", "BOAT", None)
+Refresh_intervall = 60_000 #I milisekunder
 
 
 
@@ -38,7 +39,8 @@ class Application:
         #Detta las till för att visa att vi väntar på första uppdateringen, annars visas bara "Welcome to the workshop" tills vi får data från API:et
         self.data_status = "Waiting for first update"
         self.fetch_trafiklab_data()
-
+        #4.1 Här bärjar timern ticka när ESP32 startar
+        self.refresh_timer = lv.timer_create(self.when_auto_refresh, Refresh_intervall, None)
         log("student application ready")
 
     @staticmethod
@@ -109,7 +111,7 @@ class Application:
             if not matching_departures:
                 lines.append("No departures found for the selected transport type.")
 
-    #Denna ska vara längst ner på tilen när det inte finns transport 
+            #Denna ska vara längst ner på tilen när det inte finns transport 
             lines.append("Data: Trafiklab.se")
             self.tile2_label.set_text("\n".join(lines))
             
@@ -119,6 +121,10 @@ class Application:
 
 
     def when_refresh_clicked(self, _event):
+        self.fetch_trafiklab_data()
+
+    #4.1 För hämta ny trafik data när den gör en auto refresh
+    def when_auto_refresh(self, _timer):
         self.fetch_trafiklab_data()
 
     def action_button(self, parent, text, x, y, width, callback):
