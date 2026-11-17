@@ -109,12 +109,31 @@ class Application:
             if not matching_departures:
                 lines.append("No departures found for the selected transport type.")
 
-
+    #Denna ska vara längst ner på tilen när det inte finns transport 
             lines.append("Data: Trafiklab.se")
             self.tile2_label.set_text("\n".join(lines))
             
         except Exception as e:
             self.tile2_label.set_text("Error loading data:\n" + str(e)[:50])
+
+
+
+    def when_refresh_clicked(self, _event):
+        self.fetch_trafiklab_data()
+
+    def action_button(self, parent, text, x, y, width, callback):
+        button = lv.button(parent)
+        button.set_size(width, 52)
+        button.set_pos(x, y)
+        button.set_style_bg_color(lv.color_hex(0x0B7688), 0)
+        button.add_event_cb(callback, lv.EVENT.CLICKED, None)
+        label = lv.label(button)
+        label.set_text(text)
+        label.set_style_text_font(lv.font_montserrat_20, 0)
+        label.set_style_text_color(lv.color_hex(0xFFFFFF), 0)
+        label.center()
+        return button
+
 
     #US3.2B 
     def on_settings_changed(self, _event):
@@ -156,14 +175,21 @@ class Application:
         self.tile2_label.set_height(330)
         self.tile2_label.set_pos(24, 20)
         self.apply_tile_colors(self.tile2, self.tile2_label, False)
+        self.action_button(self.tile2, "Refresh", 390, 380, 170, self.when_refresh_clicked
+        )
 
 
         #US3.1 Settings skärmen med alla inställningar
         settings_title = lv.label(self.tile3)
-        settings_title.set_text("SETTINGS")
+        settings_title.set_text("--------SETTINGS-------")
         settings_title.set_style_text_font(lv.font_montserrat_28, 0)
         self.apply_tile_colors(self.tile3, settings_title, False)
-        settings_title.set_pos(250, 20)
+        settings_title.set_pos(200, 20)
+
+        #US4.2 vår knapp i tile 2 och 3
+        self.action_button(self.tile3, "Refresh",400,340,176, self.when_refresh_clicked)
+
+
 
         # US3.2B Val av hållplats ligger här 
         stop_label = lv.label(self.tile3)
@@ -179,7 +205,7 @@ class Application:
         #-----------------------------------------------------------------------------------------
         #US3.3 Här väljs transporttyp dvs bus, tåg osv
         transport_label = lv.label(self.tile3)
-        transport_label.set_text("Transport")
+        transport_label.set_text("Choose a transport type")
         transport_label.set_style_text_font(lv.font_montserrat_20, 0)
         transport_label.set_style_text_color(lv.color_hex(0xFFFFFF), 0)
         transport_label.set_pos(40, 145)
