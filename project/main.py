@@ -197,6 +197,17 @@ class Application:
         self.update_status()
     #--------------------------------------------------------------------
 
+
+    # 3.5 - 1
+    def when_reset_clicked(self, _event):
+        self.stop_dropdown.set_selected(self.saved_stop_index)
+        self.transport_dropdown.set_selected(self.saved_transport_index)
+        self.stop_dropdown.send_event(lv.EVENT.VALUE_CHANGED, None)
+        
+        self.fetch_trafiklab_data()
+    # ---------------------------------------------------
+
+
     def create_ui(self):
         'Function: Creates UI'
         self.tileview = lv.tileview(lv.screen_active())
@@ -236,6 +247,10 @@ class Application:
         #US3.4 Själva "Save" knappen
         self.action_button(self.tile3, "Save", 24, 340, 176, self.when_save_settings_clicked)
         #--------------------------------------------------
+
+        # 3.5 - 2
+        self.action_button(self.tile3, "Reset", 212, 340, 176, self.when_reset_clicked)
+        # ---------------------------------------------------
 
         #US3.1 Settings skärmen med alla inställningar
         settings_title = lv.label(self.tile3)
