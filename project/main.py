@@ -95,7 +95,7 @@ class Application:
             data = response.json()
             response.close()
 
-            lines = ["DEPARTURES", stop_name, ""]
+            lines = ["-------DEPARTURES-------", stop_name, ""]
 
             #US3.3 I denna for loop filtreras avgångarna beroende på den valda tranport typen man har valt, om man väljer "all" så visas alla avgångar
             # Dock den behöver en refresh för uppdatera datan
@@ -215,10 +215,10 @@ class Application:
         self.tileview.set_scrollbar_mode(lv.SCROLLBAR_MODE.OFF)
 
         #Detta är vår US,2.1
-        self.tile1 = self.tileview.add_tile(0, 0, lv.DIR.RIGHT)
-        self.tile2 = self.tileview.add_tile(1, 0, lv.DIR.RIGHT | lv.DIR.LEFT)
-        self.tile3 = self.tileview.add_tile(2, 0, lv.DIR.LEFT)
-
+        self.tile1 = self.tileview.add_tile(0, 0, lv.DIR.BOTTOM | lv.DIR.RIGHT)
+        self.tile4 = self.tileview.add_tile(1, 0, lv.DIR.BOTTOM | lv.DIR.LEFT)
+        self.tile2 = self.tileview.add_tile(0, 1, lv.DIR.TOP | lv.DIR.RIGHT)
+        self.tile3 = self.tileview.add_tile(1, 1, lv.DIR.TOP | lv.DIR.LEFT)
 
         self.tile1_label = lv.label(self.tile1)
         self.tile1_label.set_text(
@@ -234,13 +234,13 @@ class Application:
 
         self.tile2_label = lv.label(self.tile2)
         self.tile2_label.set_text(
-            "DEPARTURES\nLoading live data...\n\n"
+            "------DEPARTURES------\nLoading live data...\n\n"
             "Data: Trafiklab.se "
         )
         self.tile2_label.set_style_text_font(lv.font_montserrat_28, 0)
         self.tile2_label.set_width(560)
         self.tile2_label.set_height(330)
-        self.tile2_label.set_pos(24, 20)
+        self.tile2_label.set_pos(150, 20)
         self.apply_tile_colors(self.tile2, self.tile2_label, False)
         self.action_button(self.tile2, "Refresh", 390, 380, 170, self.when_refresh_clicked)
 
@@ -254,10 +254,10 @@ class Application:
 
         #US3.1 Settings skärmen med alla inställningar
         settings_title = lv.label(self.tile3)
-        settings_title.set_text("--------SETTINGS-------")
+        settings_title.set_text("----------SETTINGS---------")
         settings_title.set_style_text_font(lv.font_montserrat_28, 0)
         self.apply_tile_colors(self.tile3, settings_title, False)
-        settings_title.set_pos(200, 20)
+        settings_title.set_pos(150, 20)
 
         #US4.2 vår knapp i tile 2 och 3
         self.action_button(self.tile3, "Refresh",400,340,176, self.when_refresh_clicked)
@@ -270,6 +270,13 @@ class Application:
         self.status_label.set_style_text_color(lv.color_hex(0xFFFFFF), 0)
         self.status_label.set_pos(40, 230)
         #------------------------------------------------
+
+        #US5.1 Journey skärm
+        self.tile4_label = lv.label(self.tile4)
+        self.tile4_label.set_text( "-------Journey Screen------" )
+        self.tile4_label.set_style_text_font(lv.font_montserrat_28, 0)
+        self.apply_tile_colors(self.tile4, self.tile4_label, False)
+        self.tile4_label.set_pos(150, 20)
 
         # US3.2B Val av hållplats ligger här 
         stop_label = lv.label(self.tile3)
