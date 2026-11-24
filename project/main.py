@@ -46,6 +46,8 @@ class Application:
         self.refresh_timer = lv.timer_create(self.when_auto_refresh, Refresh_intervall, None)
         log("student application ready")
 
+
+
     @staticmethod
     #Här är en funktion som ändrar färgen på bakgrunden och texten på en tile, vi bytte ut till skolans logga färg, alla tiles är samma färg
     def apply_tile_colors(tile, label, dark):
@@ -227,7 +229,7 @@ class Application:
         "* Alind Khudeeda\n* Leon Bönström\n* Ahmad lahm-Alajanje"
         )
 
-    
+
         self.tile1_label.set_style_text_font(lv.font_montserrat_28, 0)
         self.tile1_label.set_width(550)
         self.tile1_label.center()
@@ -242,7 +244,7 @@ class Application:
         self.tile2_label.set_style_text_font(lv.font_montserrat_28, 0)
         self.tile2_label.set_width(560)
         self.tile2_label.set_height(330)
-        self.tile2_label.set_pos(150, 20)
+        self.tile2_label.set_pos(40, 20)
         self.apply_tile_colors(self.tile2, self.tile2_label, False)
         self.action_button(self.tile2, "Refresh", 390, 380, 170, self.when_refresh_clicked)
 
@@ -280,6 +282,7 @@ class Application:
         self.apply_tile_colors(self.tile4, self.tile4_label, False)
         self.tile4_label.set_pos(150, 20)
 
+
         # US3.2B Val av hållplats ligger här 
         stop_label = lv.label(self.tile3)
         stop_label.set_text("Choose a stop station:")
@@ -306,6 +309,27 @@ class Application:
             self.on_settings_changed, lv.EVENT.VALUE_CHANGED, None
         )
         #-----------------------------------------------------------------------------------------
+
+        self.add_swipe_indicator(self.tile1, f"Journey {lv.SYMBOL.RIGHT}", 450, 410)
+        self.add_swipe_indicator(self.tile1, f"{lv.SYMBOL.DOWN} Departures", 40, 410)
+
+        self.add_swipe_indicator(self.tile4, f"{lv.SYMBOL.LEFT} Start", 40, 410)
+        self.add_swipe_indicator(self.tile4, f"{lv.SYMBOL.DOWN} Settings", 450, 410)
+
+        self.add_swipe_indicator(self.tile2, f"{lv.SYMBOL.UP} Start", 40, 10)
+        self.add_swipe_indicator(self.tile2, f"Settings {lv.SYMBOL.RIGHT}", 450, 10)
+
+        self.add_swipe_indicator(self.tile3, f"{lv.SYMBOL.UP} Journey", 450, 10)
+        self.add_swipe_indicator(self.tile3, f"{lv.SYMBOL.LEFT} Departures", 40, 10)
+
+    def add_swipe_indicator(self, parent, text, x, y):
+      # Svajp indikator
+        indicator = lv.label(parent)
+        indicator.set_text(text)
+        indicator.set_style_text_font(lv.font_montserrat_16, 0)
+        indicator.set_style_text_color(lv.color_hex(0x88CCDD), 0)  # Ljusare blå/turkos ton
+        indicator.set_pos(x, y)
+        return indicator
 
 
     @staticmethod
