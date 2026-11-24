@@ -222,10 +222,12 @@ class Application:
 
         self.tile1_label = lv.label(self.tile1)
         self.tile1_label.set_text(
-        "Public Transport Info\nVersion 1.2\nGroup 21:\n"
+        "    ---------Public Transport Info---------\n                         Version 1.2     \n                         Group 21 \n"
         "* Blediona Huskaj\n* Alexandros Salama\n* Alan Khalil\n"
         "* Alind Khudeeda\n* Leon Bönström\n* Ahmad lahm-Alajanje"
         )
+
+    
         self.tile1_label.set_style_text_font(lv.font_montserrat_28, 0)
         self.tile1_label.set_width(550)
         self.tile1_label.center()
@@ -234,7 +236,7 @@ class Application:
 
         self.tile2_label = lv.label(self.tile2)
         self.tile2_label.set_text(
-            "------DEPARTURES------\nLoading live data...\n\n"
+            "        ------DEPARTURES------\nLoading live data...\n\n"
             "Data: Trafiklab.se "
         )
         self.tile2_label.set_style_text_font(lv.font_montserrat_28, 0)
@@ -254,7 +256,7 @@ class Application:
 
         #US3.1 Settings skärmen med alla inställningar
         settings_title = lv.label(self.tile3)
-        settings_title.set_text("----------SETTINGS---------")
+        settings_title.set_text("-----SETTINGS-----")
         settings_title.set_style_text_font(lv.font_montserrat_28, 0)
         self.apply_tile_colors(self.tile3, settings_title, False)
         settings_title.set_pos(150, 20)
@@ -273,7 +275,7 @@ class Application:
 
         #US5.1 Journey skärm
         self.tile4_label = lv.label(self.tile4)
-        self.tile4_label.set_text( "-------Journey Screen------" )
+        self.tile4_label.set_text( "-----Journey Screen-----      " )
         self.tile4_label.set_style_text_font(lv.font_montserrat_28, 0)
         self.apply_tile_colors(self.tile4, self.tile4_label, False)
         self.tile4_label.set_pos(150, 20)
